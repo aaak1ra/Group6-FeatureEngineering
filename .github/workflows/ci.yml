@@ -1,0 +1,42 @@
+name: Python CI Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Install dependencies
+      run: |
+        pip install pandas numpy pytest
+    
+    - name: Create folders
+      run: |
+        mkdir -p input output tests
+    
+    - name: Create test CSV
+      run: |
+        echo "Name,Age,Score,Grade,EnrollmentDate" > input/test.csv
+        echo "John,25,85,B,2024-01-15" >> input/test.csv
+        echo "Mary,22,92,A,2024-01-20" >> input/test.csv
+        echo "Bob,35,45,F,2024-02-10" >> input/test.csv
+        echo "Alice,19,150,A,2024-12-25" >> input/test.csv
+    
+    - name: Run main script
+      run: python main.py
+    
+    - name: Run tests
+      run: |
+        python -m pytest tests/ -v
